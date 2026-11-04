@@ -17,5 +17,5 @@ export default defineConfig({
     watch: { ignored: ["**/src-tauri/**"] },
   },
   build: { target: "es2022", chunkSizeWarningLimit: 1500 },
-  test: { environment: "node", include: ["src/**/*.test.ts"] },
+  test: { environment: "node", include: ["src/**/*.test.ts", "src/**/*.test.tsx"] },
 });

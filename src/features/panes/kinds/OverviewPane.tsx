@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FolderOpen, GitBranch, Plus, Target } from "lucide-react";
 import { toast } from "sonner";
 import { Badge, Button, EmptyState } from "@/components/ui";
@@ -11,7 +11,10 @@ import type { PaneProps } from "../registry";
 
 export function OverviewPane({ workspaceId }: PaneProps) {
   const ws = useWorkspaces((s) => s.items.find((w) => w.id === workspaceId));
-  const missions = useMissions((s) => s.items.filter((m) => m.workspaceId === workspaceId));
+  // Select the stable array, filter in render: a selector returning a new
+  // array every call makes zustand/React loop forever (React error #185).
+  const allMissions = useMissions((s) => s.items);
+  const missions = useMemo(() => allMissions.filter((m) => m.workspaceId === workspaceId), [allMissions, workspaceId]);
   const openNewMission = useApp((s) => s.openNewMission);
   const [git, setGit] = useState<GitInfo | null>(null);
 

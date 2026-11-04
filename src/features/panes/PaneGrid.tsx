@@ -45,9 +45,12 @@ function NodeView({ node, workspaceId }: { node: LayoutNode; workspaceId: string
   );
 }
 
+/** Stable fallback: `?? []` inside a selector would create a new array on every read. */
+const NO_MINIMIZED: never[] = [];
+
 /** Tray with minimized panes. */
 function MinimizedTray() {
-  const minimized = useLayout((s) => s.doc?.minimized ?? []);
+  const minimized = useLayout((s) => s.doc?.minimized ?? NO_MINIMIZED);
   const apply = useLayout((s) => s.apply);
   const closePaneById = useLayout((s) => s.closePaneById);
   if (minimized.length === 0) return null;
