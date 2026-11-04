@@ -1,0 +1,50 @@
+name: Release
+
+# Push a tag like v0.2.0 (matching package.json / tauri.conf.json version).
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: aarch64-apple-darwin
+          - target: x86_64-apple-darwin
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+          key: ${{ matrix.target }}
+      - run: npm ci
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Updater signature (minisign). Without these the updater artifacts are not signed and the release fails.
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: "FORGE ${{ github.ref_name }}"
+          releaseBody: |
+            Veja o CHANGELOG.md. Primeira instalação no macOS (sem notarização Apple): abra o .dmg, arraste o FORGE para Aplicativos e, na primeira vez, clique com o botão direito no app → Abrir (ou Ajustes do Sistema → Privacidade e Segurança → Abrir mesmo assim). Atualizações seguintes são instaladas pelo próprio app, com verificação de assinatura.
+          # Review the draft, then publish: the updater only sees published releases.
+          releaseDraft: true
+          prerelease: false
+          includeUpdaterJson: true
+          args: --target ${{ matrix.target }}

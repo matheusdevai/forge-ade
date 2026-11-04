@@ -1,0 +1,5 @@
+Some login-shell banner line that is not JSON
+{"type": "system", "subtype": "hook_started", "hook_name": "SessionStart", "session_id": "00000000-0000-0000-0000-000000000000"}
+{"type": "system", "subtype": "init", "model": "claude-haiku-5-5", "claude_code_version": "2.1.317", "session_id": "00000000-0000-0000-0000-000000000000", "cwd": "/tmp/forge-smoke"}
+{"type": "assistant", "message": {"model": "claude-haiku-5-5", "role": "assistant", "content": [{"type": "text", "text": "FORGE_OK"}]}, "session_id": "00000000-0000-0000-0000-000000000000"}
+{"type": "result", "subtype": "success", "is_error": false, "result": "FORGE_OK", "duration_ms": 2153, "num_turns": 1, "total_cost_usd": 0.00581523, "usage": {"input_tokens": 2, "cache_creation_input_tokens": 28462, "cache_read_input_tokens": 9013, "output_tokens": 65}, "session_id": "00000000-0000-0000-0000-000000000000"}
